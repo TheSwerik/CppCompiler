@@ -15,7 +15,9 @@ namespace CppCompiler
         {
             _quiet = args.Any(a => a.Contains("q"));
             if (args.Any(a => Regex.IsMatch(a, "\\d+"))) Compile(int.Parse(args.First(a => Regex.IsMatch(a, "\\d"))));
-            else for (var i = 1; i <= MaxProblems; i++) Compile(i);
+            else
+                for (var i = 1; i <= MaxProblems; i++)
+                    Compile(i);
         }
 
         private static void Compile(int number)
@@ -37,7 +39,7 @@ namespace CppCompiler
             if (process == null) throw new CompilerNotFoundException();
             using var error = process.StandardError;
             process.WaitForExit();
-            if (_quiet && process.ExitCode == 0) Console.WriteLine(problem + " compiled successfully.");
+            if (process.ExitCode == 0) Console.WriteLine(problem + " compiled successfully.");
             else if (!_quiet) Console.Write(error.ReadToEnd());
         }
     }
