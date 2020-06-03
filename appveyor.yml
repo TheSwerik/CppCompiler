@@ -10,7 +10,7 @@ skip_tags: true
 configuration: Release
 
 before_build:
-#  - 'curl -H "Authorization: token %download_token%" -H "Accept: application/vnd.github.v3.raw" -O -L "%download_link%/developer-certificate.pfx"'
+  - 'curl -H "Authorization: token %download_token%" -H "Accept: application/vnd.github.v3.raw" -O -L "%download_link%/developer-certificate.pfx"'
   - ps: nuget restore -Verbosity quiet
 
 build:
@@ -33,6 +33,7 @@ for:
 
     after_test:
       - ps: dotnet publish "-p:PublishProfile=$($env:project_name).csproj" -c:Release -o:publish -v:m -r:win-x64 --self-contained:true -p:PublishSingleFile=true -p:PublishTrimmed=true
+      - '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f %APPVEYOR_BUILD_FOLDER%/developer-certificate.pfx /t http://timestamp.comodoca.com/authenticode /p %cert_password% /fd sha256 %APPVEYOR_BUILD_FOLDER%/publish/%application_name%.exe'
 
     artifacts:
       - path: /publish/$(application_name).exe
