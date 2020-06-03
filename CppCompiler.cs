@@ -20,7 +20,7 @@ namespace CppCompiler
 
         private static void Compile(int number)
         {
-            var problem = "Problem" + new string('0', 3 - (int) Math.Log10(number)) + number;
+            var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(number)) + number;
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
 
