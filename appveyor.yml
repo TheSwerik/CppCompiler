@@ -11,7 +11,7 @@ configuration: Release
 
 before_build:
 #  - 'curl -H "Authorization: token %download_token%" -H "Accept: application/vnd.github.v3.raw" -O -L "%download_link%/developer-certificate.pfx"'
-  - ps: nuget restore -Verbosity quiet
+  - ps: nuget restore CppCompiler.sln -Verbosity quiet
 
 build:
   verbosity: minimal
