@@ -1,5 +1,5 @@
 ﻿environment:
-  my_version_number: 1.2
+  my_version_number: 1.3
   application_name: CppCompiler
   project_name: CppCompiler
 

@@ -34,10 +34,9 @@ namespace CppCompiler
                            };
             using var process = Process.Start(compiler);
             if (process == null) throw new CompilerNotFoundException();
-            using var standard = process.StandardOutput;
             using var error = process.StandardError;
             process.WaitForExit();
-            if (_quiet && process.ExitCode == 0) Console.WriteLine(standard.ReadToEnd());
+            if (_quiet && process.ExitCode == 0) Console.WriteLine(problem + " compiled successfully.");
             else if (!_quiet) Console.Write(error.ReadToEnd());
         }
     }
