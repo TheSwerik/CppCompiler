@@ -3,6 +3,12 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>CppCompiler</RootNamespace>
+        <Configurations>Release</Configurations>
+        <LangVersion>8</LangVersion>
+        <Nullable>enable</Nullable>
+        <AssemblyName>CppCompiler</AssemblyName>
+        <ProjectGuid>{58CDE980-EB8A-489F-A58F-369BA698FC8B}</ProjectGuid>
     </PropertyGroup>
 
 </Project>

@@ -9,15 +9,13 @@ namespace CppCompiler
     internal static class CppCompiler
     {
         private const int MaxProblems = 2000;
-        private static bool quiet;
+        private static bool _quiet;
 
         internal static void Main(string[] args)
         {
-            quiet = args.Any(a => a.Contains("q"));
+            _quiet = args.Any(a => a.Contains("q"));
             if (args.Any(a => Regex.IsMatch(a, "\\d+"))) Compile(int.Parse(args.First(a => Regex.IsMatch(a, "\\d"))));
-            else
-                for (var i = 1; i <= MaxProblems; i++)
-                    Compile(i);
+            else for (var i = 1; i <= MaxProblems; i++) Compile(i);
         }
 
         private static void Compile(int number)
@@ -35,17 +33,12 @@ namespace CppCompiler
                                RedirectStandardError = true
                            };
             using var process = Process.Start(compiler);
-            if (process == null)
-            {
-                Console.WriteLine("PROCESS NULL");
-                return;
-            }
-
+            if (process == null) throw new CompilerNotFoundException();
             using var standard = process.StandardOutput;
             using var error = process.StandardError;
             process.WaitForExit();
-            if (quiet && process.ExitCode == 0) Console.WriteLine(standard.ReadToEnd());
-            else if (!quiet) Console.WriteLine(error.ReadToEnd());
+            if (_quiet && process.ExitCode == 0) Console.WriteLine(standard.ReadToEnd());
+            else if (!_quiet) Console.Write(error.ReadToEnd());
         }
     }
 }
