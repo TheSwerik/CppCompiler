@@ -23,6 +23,7 @@ namespace CppCompiler
             var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(number)) + number;
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
+            outDir.Create();
 
             var compiler = new ProcessStartInfo
                            {
