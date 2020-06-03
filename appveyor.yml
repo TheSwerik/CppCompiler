@@ -11,11 +11,11 @@ configuration: Release
 
 before_build:
 #  - 'curl -H "Authorization: token %download_token%" -H "Accept: application/vnd.github.v3.raw" -O -L "%download_link%/developer-certificate.pfx"'
-  - del CppCompiler.sln
   - ps: nuget restore -Verbosity quiet
 
 build:
   verbosity: minimal
+  project: CppCompiler.sln
 
 for:
   - branches:
