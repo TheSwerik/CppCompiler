@@ -11,12 +11,4 @@
         <ProjectGuid>{58CDE980-EB8A-489F-A58F-369BA698FC8B}</ProjectGuid>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ClCompile Include="src\main\cpp\Problem0001.cpp" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="out\cpp" />
-    </ItemGroup>
-
 </Project>

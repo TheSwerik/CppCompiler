@@ -15,13 +15,12 @@ namespace CppCompiler
         {
             _quiet = args.Any(a => a.Contains("q"));
             if (args.Any(a => Regex.IsMatch(a, "\\d+"))) Compile(int.Parse(args.First(a => Regex.IsMatch(a, "\\d"))));
-            else Compile(1, 10);
+            else Compile(1, MaxProblems);
         }
 
         private static void Compile(int number) { Compile(number, number); }
 
-        private static void Compile(int min, int max)
-        {
+        private static void Compile(int min, int max) {
             Directory.SetCurrentDirectory(@"C:\Users\seibel\IdeaProjects\Privat\CppCompiler");
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
@@ -44,11 +43,17 @@ namespace CppCompiler
             for (var i = min; i <= max; i++)
             {
                 var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(i)) + i;
+                if (!File.Exists(source + problem + ".cpp"))
+                {
+                    if (!_quiet) Console.WriteLine($"File {problem} not found.");
+                    continue;
+                }
+
                 using var process = Process.Start(compiler);
                 if (process == null) throw new CompilerNotFoundException();
                 using var output = process.StandardOutput;
-                process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" + outDir + problem +
-                                                ".exe");
+                process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" +
+                                                outDir + problem + ".exe");
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
                 process.WaitForExit();
