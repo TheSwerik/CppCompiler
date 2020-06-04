@@ -16,31 +16,46 @@ namespace CppCompiler
             _quiet = args.Any(a => a.Contains("q"));
             if (args.Any(a => Regex.IsMatch(a, "\\d+"))) Compile(int.Parse(args.First(a => Regex.IsMatch(a, "\\d"))));
             else
-                for (var i = 1; i <= MaxProblems; i++)
-                    Compile(i);
+                // for (var i = 1; i <= MaxProblems; i++)
+                Compile(1);
         }
 
-        private static void Compile(int number)
+        private static void Compile(int number) { Compile(number, number); }
+
+        private static void Compile(int min, int max)
         {
-            var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(number)) + number;
+            Directory.SetCurrentDirectory(@"C:\Users\seibel\IdeaProjects\Privat\CppCompiler");
+            var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(min)) + min;
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
             outDir.Create();
 
             var compiler = new ProcessStartInfo
                            {
-                               FileName = @"C:\MinGW\bin\g++",
-                               Arguments = source + problem + ".cpp -o " + outDir + problem + ".exe",
+                               FileName = "cmd.exe",
+                               Arguments =
+                                   "/k " +
+                                   @"""C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat""",
+                               // Arguments = source + problem + ".cpp -o " + outDir + problem + ".exe",
+                               WorkingDirectory = Directory.GetCurrentDirectory(),
                                UseShellExecute = false,
+                               CreateNoWindow = true,
                                RedirectStandardOutput = true,
+                               RedirectStandardInput = true,
                                RedirectStandardError = true
                            };
             using var process = Process.Start(compiler);
             if (process == null) throw new CompilerNotFoundException();
+            using var outpututut = process.StandardOutput;
             using var error = process.StandardError;
+            process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" + outDir + problem + ".exe");
+            process.StandardInput.Flush();
+            process.StandardInput.Close();
             process.WaitForExit();
-            if (process.ExitCode == 0) Console.WriteLine(problem + " compiled successfully.");
-            else if (!_quiet) Console.Write(error.ReadToEnd());
+            Console.WriteLine(outpututut.ReadToEnd());
+            Console.WriteLine(error.ReadToEnd());
+            // if (process.ExitCode == 0) Console.WriteLine(problem + " compiled successfully.");
+            // else if (!_quiet) Console.Write(error.ReadToEnd());
         }
     }
 }
