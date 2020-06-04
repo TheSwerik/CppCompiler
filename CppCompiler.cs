@@ -15,9 +15,7 @@ namespace CppCompiler
         {
             _quiet = args.Any(a => a.Contains("q"));
             if (args.Any(a => Regex.IsMatch(a, "\\d+"))) Compile(int.Parse(args.First(a => Regex.IsMatch(a, "\\d"))));
-            else
-                // for (var i = 1; i <= MaxProblems; i++)
-                Compile(1);
+            else Compile(1, 10);
         }
 
         private static void Compile(int number) { Compile(number, number); }
@@ -25,7 +23,6 @@ namespace CppCompiler
         private static void Compile(int min, int max)
         {
             Directory.SetCurrentDirectory(@"C:\Users\seibel\IdeaProjects\Privat\CppCompiler");
-            var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(min)) + min;
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
             outDir.Create();
@@ -44,18 +41,22 @@ namespace CppCompiler
                                RedirectStandardInput = true,
                                RedirectStandardError = true
                            };
-            using var process = Process.Start(compiler);
-            if (process == null) throw new CompilerNotFoundException();
-            using var outpututut = process.StandardOutput;
-            using var error = process.StandardError;
-            process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" + outDir + problem + ".exe");
-            process.StandardInput.Flush();
-            process.StandardInput.Close();
-            process.WaitForExit();
-            Console.WriteLine(outpututut.ReadToEnd());
-            Console.WriteLine(error.ReadToEnd());
-            // if (process.ExitCode == 0) Console.WriteLine(problem + " compiled successfully.");
-            // else if (!_quiet) Console.Write(error.ReadToEnd());
+            for (var i = min; i <= max; i++)
+            {
+                var problem = @"\Problem" + new string('0', 3 - (int) Math.Log10(i)) + i;
+                using var process = Process.Start(compiler);
+                if (process == null) throw new CompilerNotFoundException();
+                using var output = process.StandardOutput;
+                process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" + outDir + problem + ".exe");
+                process.StandardInput.Flush();
+                process.StandardInput.Close();
+                process.WaitForExit();
+                var outString = output.ReadToEnd();
+                var wasSuccessful = !outString.Contains("fatal error");
+                if (wasSuccessful) Console.WriteLine(problem + " compiled successfully.");
+                else if (!_quiet) Console.Write(outString);
+                File.Delete(problem + ".obj");
+            }
         }
     }
 }
