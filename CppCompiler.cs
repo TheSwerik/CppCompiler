@@ -47,7 +47,8 @@ namespace CppCompiler
                 using var process = Process.Start(compiler);
                 if (process == null) throw new CompilerNotFoundException();
                 using var output = process.StandardOutput;
-                process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" + outDir + problem + ".exe");
+                process.StandardInput.WriteLine("cl /EHsc " + source + problem + ".cpp /link /out:" + outDir + problem +
+                                                ".exe");
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
                 process.WaitForExit();
@@ -55,7 +56,7 @@ namespace CppCompiler
                 var wasSuccessful = !outString.Contains("fatal error");
                 if (wasSuccessful) Console.WriteLine(problem + " compiled successfully.");
                 else if (!_quiet) Console.Write(outString);
-                File.Delete(problem + ".obj");
+                File.Delete(Directory.GetCurrentDirectory() + @"\" + problem + ".obj");
             }
         }
     }
