@@ -21,7 +21,6 @@ namespace CppCompiler
         private static void Compile(int number) { Compile(number, number); }
 
         private static void Compile(int min, int max) {
-            Directory.SetCurrentDirectory(@"C:\Users\seibel\IdeaProjects\Privat\CppCompiler");
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
             outDir.Create();
