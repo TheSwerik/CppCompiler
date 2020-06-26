@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace CppCompiler
@@ -13,14 +14,19 @@ namespace CppCompiler
 
         internal static void Main(string[] args)
         {
+            SetCurrentProcessExplicitAppUserModelID("Swerik.CppCompiler.1.7");
             _quiet = args.Any(a => a.Contains("q"));
             if (args.Any(a => Regex.IsMatch(a, "\\d+"))) Compile(int.Parse(args.First(a => Regex.IsMatch(a, "\\d"))));
             else Compile(1, MaxProblems);
         }
 
+        [DllImport("shell32.dll", SetLastError = true)]
+        private static extern void SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string id);
+
         private static void Compile(int number) { Compile(number, number); }
 
-        private static void Compile(int min, int max) {
+        private static void Compile(int min, int max)
+        {
             var source = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\src\main\cpp");
             var outDir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\out\cpp");
             outDir.Create();
@@ -31,7 +37,6 @@ namespace CppCompiler
                                Arguments =
                                    "/k " +
                                    @"""C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat""",
-                               // Arguments = source + problem + ".cpp -o " + outDir + problem + ".exe",
                                WorkingDirectory = Directory.GetCurrentDirectory(),
                                UseShellExecute = false,
                                CreateNoWindow = true,
